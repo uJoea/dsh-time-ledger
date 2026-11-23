@@ -1,0 +1,53 @@
+﻿{
+  "name": "dsh-time-ledger",
+  "version": "1.0.0",
+  "description": "Records genuinely active DSH usage time and presents it as a yearly, monthly and per-session calendar.",
+  "type": "module",
+  "license": "MIT",
+  "author": "uJoea",
+  "homepage": "https://github.com/uJoea/dsh-time-ledger#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uJoea/dsh-time-ledger.git"
+  },
+  "bugs": {
+    "url": "https://github.com/uJoea/dsh-time-ledger/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "time-tracking",
+    "usage",
+    "calendar"
+  ],
+  "icon": "./icon.svg",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "icon.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "meta": {
+    "title": "dstime",
+    "description": "只在真正操作时计时，右下角实时显示，按年 / 月 / 次查看使用记录。"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  }
+}
