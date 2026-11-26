@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "dsh-time-ledger",
   "version": "1.0.0",
   "description": "Records genuinely active DSH usage time and presents it as a yearly, monthly and per-session calendar.",
