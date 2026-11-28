@@ -3,6 +3,8 @@
  *
  * The browser half owns activity detection and the live counter. This half
  * owns durable storage: one exact JSON endpoint under the local Web server.
+ * Every request to that endpoint must pass the host's `connection.admit`
+ * check before it is read or written.
  * Data lives in the workspace's dstime_data folder so it is easy to find,
  * back up and move independently of the DSH profile.
  */
@@ -10,7 +12,7 @@ import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
 
-export const inject = ['webServer']
+export const inject = ['webServer', 'connection']
 
 const ROUTE = '/dsh-time-ledger/state'
 const MAX_BODY_BYTES = 4 * 1024 * 1024
@@ -205,6 +207,15 @@ export function apply(ctx) {
     kind: 'exact',
     path: ROUTE,
     handler: async (req, res) => {
+      // Same gate the host applies to its own routes: the Host/Origin fence,
+      // then the browser-session cookie. A rejected request never reaches storage.
+      const admission = ctx.connection.admit(req)
+      if ('rejection' in admission) {
+        res.writeHead(admission.rejection, { 'cache-control': 'no-store' })
+        res.end(admission.rejection === 401 ? 'unauthorized' : 'forbidden')
+        return
+      }
+
       if (req.method === 'GET' || req.method === 'HEAD') {
         try {
           const store = await readStore()
